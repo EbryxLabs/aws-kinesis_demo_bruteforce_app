@@ -1,4 +1,4 @@
-# Desscription:
+# Description:
 	1. Perform fake bruteforce attempt on an API
 	2. Ingest data via Kinesis Data Stream
 	3. Detect bruteforce attempt via Kinesis Analytics App
