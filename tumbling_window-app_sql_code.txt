@@ -1,0 +1,33 @@
+
+/**
+ * Welcome to the SQL editor
+ * =========================
+ * 
+ * The SQL code you write here will continuously transform your streaming data
+ * when your application is running.
+ *
+ * Get started by clicking "Add SQL from templates" or pull up the
+ * documentation and start writing your own custom queries.
+ */
+
+-- creating the stream table
+CREATE OR REPLACE STREAM test_bruteforce_stream_table (
+    ip varchar(32),
+    uri varchar(32),
+    count_ip integer
+);
+
+-- create the pump that finds bruteforcing IPs
+CREATE OR REPLACE PUMP test_stream_pump AS 
+    insert into test_bruteforce_stream_table 
+        select STREAM
+            "ip" as ip,
+            "uri" as uri,
+            count("ip") as count_ip
+        from source_sql_stream_001 
+        GROUP BY 
+            "ip",
+            "uri",
+            STEP("SOURCE_SQL_STREAM_001".rowtime BY INTERVAL '10' SECOND),
+            STEP("SOURCE_SQL_STREAM_001"."eventTime" BY INTERVAL '10' SECOND)
+        having count("ip") > 10 
